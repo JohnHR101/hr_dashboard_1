@@ -1,5 +1,5 @@
-## Basic dashboard using shiny and simulated data
 
+### for example see: http://shiny.rstudio.com/tutorial/written-tutorial/lesson1/
 
 
 library(shiny)
@@ -9,7 +9,7 @@ library(shiny)
 ui <- fluidPage(
   
   # App title ----
-  titlePanel("HR Dashboard"),
+  titlePanel("HR Demographics Dashboard"),
   
   # Sidebar layout with input and output definitions ----
   sidebarLayout(
@@ -26,6 +26,15 @@ ui <- fluidPage(
       
     ),
     
+    # Input: Slider for the number of bins ----
+    sliderInput(inputId = "bins",
+                label = "Number of bins:",
+                min = 1,
+                max = 50,
+                value = 30)
+    
+  ),
+
     # Main panel for displaying outputs ----
     mainPanel(
       
@@ -50,15 +59,18 @@ server <- function(input, output) {
   # 1. It is "reactive" and therefore should be automatically
   #    re-executed when inputs (input$bins) change
   # 2. Its output type is a plot
+  
+  # Note: Within the app server function is only looking locally so 
+  d <- read.csv('./Final_Turnover_Data_CSV.csv', header = T, stringsAsFactors = F)
+  
   output$distPlot <- renderPlot({
     
-    d <- read.csv('./Final_Turnover_Data_CSV.csv', header = T, stringsAsFactors = F)
-    x <- d$age
+    x    <- d$age
     bins <- seq(min(x), max(x), length.out = input$bins + 1)
     
     hist(x, breaks = bins, col = "#75AADB", border = "white",
          xlab = "Age",
-         main = "Histogram of Employee Age")
+         main = "Associate Age Distribution")
     
   })
   
@@ -69,5 +81,3 @@ server <- function(input, output) {
 
 
 shinyApp(ui = ui, server = server)
-
-
